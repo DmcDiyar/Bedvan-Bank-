@@ -14,82 +14,6 @@ html {
   font-size: 62.5%;
   box-sizing: border-box;
 }
-.modal__form {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  padding: 2rem;
-}
-/* Modal stilleri (index.html'den alınabilir, ancak bank.html için de geçerli) */
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 3rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-}
-.modal__header {
-  font-size: 2rem;
-  margin-bottom: 2rem;
-}
-.modal__form {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  padding: 2rem;
-}
-.modal__form input {
-  padding: 0.5rem;
-  font-size: 1rem;
-}
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 500;
-}
-.hidden {
-  display: none;
-}
-.btn--close-modal {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  font-size: 1.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-/* İşlem filtreleme butonları */
-.movements__filter {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-.btn--filter {
-  padding: 0.5rem 1rem;
-  background-color: #f3f3f3;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-.btn--filter--active {
-  background-color: #5ec576;
-  color: white;
-}
-
-/* Transfer önerileri */
-#usernames {
-  font-size: 1rem;
-}
 
 body {
   font-family: 'Poppins', sans-serif;
@@ -370,4 +294,59 @@ h2 {
 
 .timer {
   font-weight: 600;
+}
+
+/* İşlem filtreleme butonları */
+.movements__filter {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.btn--filter {
+  padding: 0.5rem 1rem;
+  background-color: #f3f3f3;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.btn--filter--active {
+  background-color: #5ec576;
+  color: white;
+}
+
+/* Transfer önerileri */
+#usernames {
+  font-size: 1rem;
+}
+
+/* Logout button */
+.logout-btn {
+  grid-column: 1 / -1;
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #e52a5a;
+  color: white;
+  border: none;
+  border-radius: 0.7rem;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #ff585f;
+}
+
+/* Currency selector */
+#currency-selector {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ddd;
+  font-family: inherit;
+  font-size: 1.2rem;
 }

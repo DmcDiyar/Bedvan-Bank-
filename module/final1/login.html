@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bedvan Bank | Giriş</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .login-container {
+        background-color: #fff;
+        padding: 5rem;
+        border-radius: 1rem;
+        box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.1);
+        width: 50rem;
+      }
+      .login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+      .login-input {
+        padding: 1.5rem;
+        border: 1px solid #ddd;
+        border-radius: 0.5rem;
+        font-family: inherit;
+        font-size: 1.6rem;
+      }
+      .login-input:focus {
+        outline: none;
+        border-color: #5ec576;
+      }
+      .login-btn {
+        background-color: #5ec576;
+        color: white;
+        border: none;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        font-family: inherit;
+        font-size: 1.6rem;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .login-btn:hover {
+        background-color: #4bbb7d;
+      }
+      .back-link {
+        text-align: center;
+        margin-top: 2rem;
+      }
+      .back-link a {
+        color: #5ec576;
+        text-decoration: none;
+        font-size: 1.6rem;
+      }
+      .back-link a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h1 style="text-align: center; margin-bottom: 2rem">
+        Bedvan Bank - Giriş
+      </h1>
+      <form class="login-form" id="login-form">
+        <input
+          type="text"
+          class="login-input"
+          placeholder="Kullanıcı adı"
+          required
+        />
+        <input
+          type="password"
+          class="login-input"
+          placeholder="Şifre"
+          required
+        />
+        <button type="submit" class="login-btn">Giriş Yap</button>
+      </form>
+      <div class="back-link">
+        <a href="../../index.html">Hesap oluştur</a>
+      </div>
+    </div>
+    <script>
+      document
+        .getElementById('login-form')
+        .addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          const username = this.elements[0].value;
+          const password = this.elements[1].value;
+
+          // Get accounts from localStorage
+          const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
+
+          // Find user
+          const user = accounts.find(
+            account =>
+              account.username === username && account.password === password
+          );
+
+          if (user) {
+            // Save current user to localStorage
+            localStorage.setItem('currentUser', JSON.stringify(user));
+
+            // Redirect to bank page
+            window.location.href = 'bank.html';
+          } else {
+            alert('Hatalı kullanıcı adı veya şifre.');
+          }
+        });
+    </script>
+  </body>
+</html>

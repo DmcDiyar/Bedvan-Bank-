@@ -1,67 +1,28 @@
 'use strict';
 
-// DOM Elements
+///////////////////////////////////////
+// Modal window
+
 const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
-const btnCloseModal = document.querySelectorAll('.btn--close-modal');
+const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
-const btnScrollTo = document.querySelector('.btn--scroll-to');
-const section1 = document.querySelector('#section--1');
-const nav = document.querySelector('.nav');
-const tabs = document.querySelectorAll('.operations__tab');
-const tabsContainer = document.querySelector('.operations__tab-container');
-const tabsContent = document.querySelectorAll('.operations__content');
-const modalForm = document.querySelector('.modal__form');
-const inputFirstName = document.querySelector('.login__input--first-name');
-const inputLastName = document.querySelector('.login__input--last-name');
-const inputEmail = document.querySelector('.login__input--email');
 
-// Debug selectors
-console.log('modal:', modal);
-console.log('overlay:', overlay);
-console.log('btnCloseModal:', btnCloseModal);
-console.log('btnsOpenModal:', btnsOpenModal);
-console.log('modalForm:', modalForm);
-
-// Modal window
 const openModal = function (e) {
-  if (modal && overlay) {
-    e.preventDefault();
-    modal.classList.remove('hidden');
-    overlay.classList.remove('hidden');
-  } else {
-    console.error('Modal or overlay not found!');
-  }
+  e.preventDefault();
+  modal.classList.remove('hidden');
+  overlay.classList.remove('hidden');
 };
 
 const closeModal = function () {
-  if (modal && overlay) {
-    modal.classList.add('hidden');
-    overlay.classList.add('hidden');
-  } else {
-    console.error('Modal or overlay not found!');
-  }
+  modal.classList.add('hidden');
+  overlay.classList.add('hidden');
 };
 
-if (btnsOpenModal.length > 0) {
-  btnsOpenModal.forEach(btn => {
-    btn.addEventListener('click', openModal);
-  });
-} else {
-  console.error('No elements with btn--show-modal found!');
-}
+btnsOpenModal.forEach(btn => btn.addEventListener('click', openModal));
 
-if (btnCloseModal.length > 0) {
-  btnCloseModal.forEach(btn => btn.addEventListener('click', closeModal));
-} else {
-  console.error('btnCloseModal not found!');
-}
-
-if (overlay) {
-  overlay.addEventListener('click', closeModal);
-} else {
-  console.error('overlay not found!');
-}
+btnCloseModal.addEventListener('click', closeModal);
+overlay.addEventListener('click', closeModal);
 
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
@@ -69,150 +30,116 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
-if (modalForm) {
-  modalForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const firstName = inputFirstName.value.trim();
-    const lastName = inputLastName.value.trim();
-    const email = inputEmail.value.trim();
-    if (firstName && lastName && email) {
-      const username = (firstName[0] + lastName[0]).toLowerCase();
-      const pin = (firstName.slice(0, 2) + lastName.slice(0, 2)).toLowerCase();
-      const verificationCode = Math.floor(100000 + Math.random() * 900000);
-      alert(
-        `Hesabınız oluşturuldu!\nKullanıcı adınız: ${username}\nŞifreniz: ${pin}\nDoğrulama Kodu: ${verificationCode}\nLütfen bu kodu e-posta ile doğrulayın.`
-      );
-      const newAccount = {
-        owner: `${firstName} ${lastName}`,
-        username: username,
-        movements: [500],
-        interestRate: 1.2,
-        pin: pin,
-        movementsDates: [new Date().toISOString()],
-        currency: 'TRY',
-        locale: 'tr-TR',
-      };
-      let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
-      if (!accounts.some(acc => acc.username === username)) {
-        accounts.push(newAccount);
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-      }
-      sessionStorage.setItem('loginData', JSON.stringify(newAccount));
-      inputFirstName.value = inputLastName.value = inputEmail.value = '';
-      closeModal();
-      window.location.href = './module/final1/bank.html';
-    } else {
-      alert('Lütfen tüm alanları doldurun!');
-    }
-  });
-}
+// Registration form handling
+const modalForm = document.querySelector('.modal__form');
+const inputFirstName = document.querySelector('.login__input--first-name');
+const inputLastName = document.querySelector('.login__input--last-name');
+const inputEmail = document.querySelector('.login__input--email');
 
-// Button scrolling
-if (btnScrollTo) {
-  btnScrollTo.addEventListener('click', function () {
-    section1.scrollIntoView({ behavior: 'smooth' });
-  });
-} else {
-  console.error('btnScrollTo not found!');
-}
-
-// Page navigation
-document.querySelector('.nav__links').addEventListener('click', function (e) {
+modalForm.addEventListener('submit', function (e) {
   e.preventDefault();
-  if (
-    e.target.classList.contains('nav__link') &&
-    !e.target.classList.contains('sign-in-link') &&
-    !e.target.classList.contains('btn--show-modal')
-  ) {
-    const id = e.target.getAttribute('href');
-    if (id && id !== '#' && id !== 'javascript:void(0)') {
-      const targetElement = document.querySelector(id);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+
+  const firstName = inputFirstName.value.trim();
+  const lastName = inputLastName.value.trim();
+  const email = inputEmail.value.trim();
+
+  // Validate inputs
+  if (!firstName || !lastName || !email) {
+    alert('Lütfen tüm alanları doldurun.');
+    return;
   }
+
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    alert('Lütfen geçerli bir e-posta adresi girin.');
+    return;
+  }
+
+  // Generate username and password
+  const username = firstName.charAt(0).toLowerCase() + lastName.toLowerCase();
+  const password =
+    firstName.slice(0, 2).toLowerCase() + lastName.slice(0, 2).toLowerCase();
+
+  // Get existing accounts from localStorage or initialize empty array
+  const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
+
+  // Check if user already exists
+  const existingUser = accounts.find(account => account.username === username);
+  if (existingUser) {
+    alert(
+      'Bu kullanıcı adı zaten mevcut. Lütfen farklı bilgilerle tekrar deneyin.'
+    );
+    return;
+  }
+
+  // Create new account with initial balance of 1000 TL and empty transactions
+  const newAccount = {
+    owner: `${firstName} ${lastName}`,
+    username: username,
+    password: password,
+    email: email,
+    balance: 1000, // Set initial balance to 1000 TL
+    movements: [1000], // Add initial deposit to movements
+    movementsDates: [new Date().toISOString()], // Add date for initial deposit
+    interestRate: 1.2,
+    currency: 'TRY',
+    locale: 'tr-TR',
+  };
+
+  // Add new account to accounts array
+  accounts.push(newAccount);
+
+  // Save updated accounts to localStorage
+  localStorage.setItem('accounts', JSON.stringify(accounts));
+
+  // Show credentials to user in an alert
+  alert(
+    `Hesabınız oluşturuldu!\nKullanıcı adınız: ${username}\nŞifreniz: ${password}`
+  );
+
+  // Clear form fields
+  inputFirstName.value = inputLastName.value = inputEmail.value = '';
+
+  // Close modal
+  closeModal();
+
+  // Redirect to bank page after a short delay to allow user to read the alert
+  setTimeout(() => {
+    window.location.href = 'module/final1/bank.html';
+  }, 1000);
+});
+
+// Smooth scrolling for "Daha Fazla Bilgi" button
+const btnScrollTo = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
+
+btnScrollTo.addEventListener('click', function (e) {
+  section1.scrollIntoView({ behavior: 'smooth' });
 });
 
 // Tabbed component
-if (tabsContainer) {
-  tabsContainer.addEventListener('click', function (e) {
-    const clicked = e.target.closest('.operations__tab');
-    if (!clicked) return;
-    tabs.forEach(t => t.classList.remove('operations__tab--active'));
-    tabsContent.forEach(c => c.classList.remove('operations__content--active'));
-    clicked.classList.add('operations__tab--active');
-    document
-      .querySelector(`.operations__content--${clicked.dataset.tab}`)
-      .classList.add('operations__content--active');
-  });
-}
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
 
-// Menu fade animation
-const handleHover = function (e) {
-  if (e.target.classList.contains('nav__link')) {
-    const link = e.target;
-    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
-    const logo = link.closest('.nav').querySelector('img');
-    siblings.forEach(el => {
-      if (el !== link) el.style.opacity = this;
-    });
-    logo.style.opacity = this;
-  }
-};
-nav.addEventListener('mouseover', handleHover.bind(0.5));
-nav.addEventListener('mouseout', handleHover.bind(1));
+tabsContainer.addEventListener('click', function (e) {
+  const clicked = e.target.closest('.operations__tab');
 
-// Sticky navigation
-const header = document.querySelector('.header');
-const navHeight = nav.getBoundingClientRect().height;
-const stickyNav = function (entries) {
-  const [entry] = entries;
-  if (!entry.isIntersecting) nav.classList.add('sticky');
-  else nav.classList.remove('sticky');
-};
-const headerObserver = new IntersectionObserver(stickyNav, {
-  root: null,
-  threshold: 0,
-  rootMargin: `-${navHeight}px`,
-});
-headerObserver.observe(header);
+  if (!clicked) return;
 
-// Reveal sections
-const allSections = document.querySelectorAll('.section');
-const revealSection = function (entries, observer) {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    entry.target.classList.remove('section--hidden');
-    observer.unobserve(entry.target);
-  });
-};
-const sectionObserver = new IntersectionObserver(revealSection, {
-  root: null,
-  threshold: 0.15,
-});
-allSections.forEach(function (section) {
-  sectionObserver.observe(section);
-  section.classList.add('section--hidden');
-});
+  // Remove active classes
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  tabsContent.forEach(c => c.classList.remove('operations__content--active'));
 
-// Lazy loading images
-const imgTargets = document.querySelectorAll('img[data-src]');
-const loadImg = function (entries, observer) {
-  const [entry] = entries;
-  if (!entry.isIntersecting) return;
-  entry.target.src = entry.target.dataset.src;
-  entry.target.addEventListener('load', function () {
-    entry.target.classList.remove('lazy-img');
-  });
-  observer.unobserve(entry.target);
-};
-const imgObserver = new IntersectionObserver(loadImg, {
-  root: null,
-  threshold: 0,
-  rootMargin: '200px',
+  // Activate tab
+  clicked.classList.add('operations__tab--active');
+
+  // Activate content area
+  document
+    .querySelector(`.operations__content--${clicked.dataset.tab}`)
+    .classList.add('operations__content--active');
 });
-imgTargets.forEach(img => imgObserver.observe(img));
 
 // Slider
 const slider = function () {
@@ -220,8 +147,11 @@ const slider = function () {
   const btnLeft = document.querySelector('.slider__btn--left');
   const btnRight = document.querySelector('.slider__btn--right');
   const dotContainer = document.querySelector('.dots');
+
   let curSlide = 0;
   const maxSlide = slides.length;
+
+  // Functions
   const createDots = function () {
     slides.forEach(function (_, i) {
       dotContainer.insertAdjacentHTML(
@@ -230,28 +160,35 @@ const slider = function () {
       );
     });
   };
+
   const activateDot = function (slide) {
     document
       .querySelectorAll('.dots__dot')
       .forEach(dot => dot.classList.remove('dots__dot--active'));
+
     document
       .querySelector(`.dots__dot[data-slide="${slide}"]`)
       .classList.add('dots__dot--active');
   };
+
   const goToSlide = function (slide) {
     slides.forEach(
       (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
     );
   };
+
+  // Next slide
   const nextSlide = function () {
     if (curSlide === maxSlide - 1) {
       curSlide = 0;
     } else {
       curSlide++;
     }
+
     goToSlide(curSlide);
     activateDot(curSlide);
   };
+
   const prevSlide = function () {
     if (curSlide === 0) {
       curSlide = maxSlide - 1;
@@ -261,26 +198,55 @@ const slider = function () {
     goToSlide(curSlide);
     activateDot(curSlide);
   };
+
   const init = function () {
     goToSlide(0);
     createDots();
     activateDot(0);
   };
   init();
-  if (btnRight) btnRight.addEventListener('click', nextSlide);
-  if (btnLeft) btnLeft.addEventListener('click', prevSlide);
+
+  // Event handlers
+  btnRight.addEventListener('click', nextSlide);
+  btnLeft.addEventListener('click', prevSlide);
+
   document.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowLeft') prevSlide();
-    if (e.key === 'ArrowRight') nextSlide();
+    e.key === 'ArrowRight' && nextSlide();
   });
-  if (dotContainer) {
-    dotContainer.addEventListener('click', function (e) {
-      if (e.target.classList.contains('dots__dot')) {
-        curSlide = Number(e.target.dataset.slide);
-        goToSlide(curSlide);
-        activateDot(curSlide);
-      }
-    });
-  }
+
+  dotContainer.addEventListener('click', function (e) {
+    if (e.target.classList.contains('dots__dot')) {
+      const { slide } = e.target.dataset;
+      goToSlide(slide);
+      activateDot(slide);
+    }
+  });
 };
 slider();
+
+// Lazy loading images
+const imgTargets = document.querySelectorAll('img[data-src]');
+
+const loadImg = function (entries, observer) {
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) return;
+
+  // Replace src with data-src
+  entry.target.src = entry.target.dataset.src;
+
+  entry.target.addEventListener('load', function () {
+    entry.target.classList.remove('lazy-img');
+  });
+
+  observer.unobserve(entry.target);
+};
+
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+  rootMargin: '200px',
+});
+
+imgTargets.forEach(img => imgObserver.observe(img));

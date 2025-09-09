@@ -31,7 +31,6 @@
         />
         <button class="login__btn">&rarr;</button>
       </form>
-      <button class="btn btn--show-modal">Yeni Hesap Aç</button>
     </nav>
 
     <main class="app">
@@ -118,30 +117,10 @@
       <p class="logout-timer">
         Oturumunuz <span class="timer">05:00</span> içinde kapatılacak
       </p>
+
+      <!-- ÇIKIŞ BUTONU -->
+      <button class="btn logout-btn">Çıkış Yap</button>
     </main>
-
-    <!-- HESAP AÇMA MODALI -->
-    <div class="modal hidden">
-      <button class="btn--close-modal">&times;</button>
-      <h2 class="modal__header">
-        Yeni banka hesabı <br />
-        sadece <span class="highlight">5 dakikada</span> açın
-      </h2>
-      <form class="modal__form">
-        <label>Ad</label>
-        <input type="text" class="login__input--first-name" required />
-        <label>Soyad</label>
-        <input type="text" class="login__input--last-name" required />
-        <label>E-posta Adresi</label>
-        <input type="email" class="login__input--email" required />
-        <button class="btn">Sonraki adım &rarr;</button>
-      </form>
-    </div>
-    <div class="overlay hidden"></div>
-
-    <footer>
-      &copy; Diyar Altan tarafından. Kendi ürününüz olarak iddia etmeyin :)
-    </footer>
 
     <script src="script.js"></script>
   </body>
